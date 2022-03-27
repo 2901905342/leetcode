@@ -1,46 +1,55 @@
-//定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，
-//调用 min、push 及 pop 的时间复杂度都是 O(1)。
+//设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+//实现 MinStack 类 :
+//MinStack() 初始化堆栈对象。
+//void push(int val) 将元素val推入堆栈。
+//void pop() 删除堆栈顶部的元素。
+//int top() 获取堆栈顶部的元素。
+//int getMin() 获取堆栈中的最小元素。
 
-/////////////思路 ：
-////////本题难点： 将 min() 函数复杂度降为 O(1)O(1) ，可通过建立辅助栈实现；
-//数据栈 A ： 栈 A 用于存储所有元素，保证入栈 push() 函数、出栈 pop() 函数、获取栈顶 top() 函数的正常逻辑。
-//辅助栈 B ： 栈 B 中存储栈 A 中所有 非严格降序 的元素，则栈 A 中的最小元素始终对应栈 B 的栈顶元素，
-//即 min() 函数只需返回栈 B 的栈顶元素即可。
-//因此，只需设法维护好 栈 BB 的元素，使其保持非严格降序，即可实现 min() 函数的 O(1) 复杂度。
+
+////最简单的想法是弄一个辅助栈
+//因此我们可以使用一个辅助栈，与元素栈同步插入与删除，用于存储与每个元素对应的最小值。
+//当一个元素要入栈时，我们取当前辅助栈的栈顶存储的最小值，与当前元素比较得出最小值，将这个最小值插入辅助栈中；
+//当一个元素要出栈时，我们把辅助栈的栈顶元素也一并弹出；
+//在任意一个时刻，栈内元素的最小值就存储在辅助栈的栈顶元素中
+
 
 #include "myhead.h"
 class MinStack {
 public:
-    /** initialize your data structure here. */
-    stack<int> A;    //数据栈
-    stack<int> B;    //辅助栈
+    stack<int> main_stack;
+    stack<int> assist_stack;
     MinStack() {
-
+        assist_stack.push(INT_MAX);
     }
 
-    void push(int x) {
-        A.push(x);
-        if (B.empty()) {
-            B.push(x);
-        }
-        else if (B.top() >= x) {
-            B.push(x);
-        }
+    void push(int val) {
+        main_stack.push(val);
+        assist_stack.push(min(assist_stack.top(), val));
     }
 
     void pop() {
-        if (A.top() == B.top()) {
-            B.pop();
+        if (!main_stack.empty()) {
+            main_stack.pop();
+            assist_stack.pop();
         }
-        A.pop();
     }
 
     int top() {
-        return A.top();
+        return main_stack.top();
+
     }
 
-    int min() {
-        return B.top();
+    int getMin() {
+        return assist_stack.top();
     }
 };
 
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack* obj = new MinStack();
+ * obj->push(val);
+ * obj->pop();
+ * int param_3 = obj->top();
+ * int param_4 = obj->getMin();
+ */

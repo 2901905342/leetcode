@@ -55,6 +55,10 @@ public:
 //它们之间的距离为 maxdist = dist[x][y]，则可以推出以任意节点构成的树最小高度一定为 H = [maxdist / 2]​;[]表示向下取整
 //且最小高度的树根节点一定在 节点 x 到节点 y 的路径上。
 
+//在此我们利用广度优先搜索来找到节点的最长路径，首先找到距离节点 0 的最远节点 x，
+//然后找到距离节点 x 的最远节点 y，然后找到节点 x 与节点 y 的路径，然后找到根节点。
+//假设P=u....v是树的一条最长生成路，则0第一次一定能找到生成路的端点（可以用反证法证明，分0在P上和0不在P上两种情况）
+
 class Solution {
 public:
     int findLongestNode(int u, vector<int>& parent, vector<vector<int>>& adj) {
